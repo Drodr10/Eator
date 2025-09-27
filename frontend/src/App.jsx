@@ -2,7 +2,8 @@ import React, { useState, useCallback } from 'react';
 import MapComponent from './MapComponent';
 import AuthModal from './AuthModal';
 import AddPinForm from './AddPinForm'; // Import the new form
-// ... other imports
+import './App.css';
+
 
 function App() {
   const [showAuthModal, setShowAuthModal] = useState(false);

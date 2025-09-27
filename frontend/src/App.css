@@ -5,7 +5,6 @@ body, #root, .App {
   width: 100vw;
   overflow: hidden;
 }
-
 .add-pin-button {
   position: absolute;
   bottom: 30px;
