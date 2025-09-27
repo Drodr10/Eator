@@ -48,7 +48,7 @@ const AddPinForm = ({ onClose, onPinAdded }) => {
     }
 
     try {
-      await axios.post('https://your-ngrok-url/api/pins', 
+      await axios.post('https://remedios-funest-amply.ngrok-free.dev/api/pins', 
         {
           description,
           location_name: locationName,
