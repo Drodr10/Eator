@@ -57,9 +57,17 @@ print("TTL index on 'expiresAt' ensured.")
 # --- Helper function to convert MongoDB docs to JSON ---
 # MongoDB documents have a special ObjectId that needs to be converted to a string
 def serialize_doc(doc):
-    for key, value in doc.items():
-        if isinstance(value, ObjectId):
-            doc[key] = str(value)
+    """Recursively convert ObjectId and datetime objects to strings."""
+    if isinstance(doc, list):
+        return [serialize_doc(item) for item in doc]
+    if isinstance(doc, dict):
+        for key, value in doc.items():
+            if isinstance(value, ObjectId):
+                doc[key] = str(value)
+            elif isinstance(value, datetime.datetime):
+                doc[key] = value.isoformat()
+            elif isinstance(value, (dict, list)):
+                serialize_doc(value)
     return doc
 
 # --- Token Verification Decorator ---
