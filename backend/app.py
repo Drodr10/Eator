@@ -33,9 +33,8 @@ users_collection = db.users # Collection for user data
 # --- Admin Seeding ---
 def seed_admin_users():
     """Creates admin users if they don't already exist."""
-    admin_users = [
-        {"username": "xruizzz", "password": "LeftoverLinks2025"},
-        {"username": "drodr10", "password": "LeftoverLinks2025"}
+    admin_user = [
+        {"username": "Spongebob", "password": "LeftoverLinks2025"},
     ]
 
     for admin_data in admin_users:
