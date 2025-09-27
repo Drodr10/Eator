@@ -201,7 +201,7 @@ def login():
         # Create a JWT token
         token = jwt.encode({
             'user_id': str(user['_id']),
-            'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=24)
+            'exp': datetime.utcnow() + datetime.timedelta(hours=24)
         }, app.config['SECRET_KEY'])
         
         return jsonify({'token': token})
