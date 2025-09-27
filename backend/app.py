@@ -66,8 +66,8 @@ def token_required(f):
     def decorated(*args, **kwargs):
         token = None
         # Check for token in the 'x-access-token' header
-        if 'x-access-token' in request.headers:
-            token = request.headers['x-access-token']
+        if 'Authorization' in request.headers:
+            token = request.headers['Authorization'].split(" ")[1]
 
         if not token:
             return jsonify({'message': 'Token is missing!'}), 401
