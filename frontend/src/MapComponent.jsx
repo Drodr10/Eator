@@ -4,7 +4,7 @@ import axios from 'axios';
 
 const position = [29.6436, -82.3549];
 
-const MapComponent = () => {
+const MapComponent = ({ refreshKey }) => {
   const [pins, setPins] = useState([]);
 
   useEffect(() => {
@@ -22,7 +22,7 @@ const MapComponent = () => {
     };
 
     getPins();
-  }, []); // The empty array means this effect runs once when the component mounts
+  }, [refreshKey]); // The empty array means this effect runs once when the component mounts
 
   return (
     <MapContainer center={position} minZoom={14} zoom={15} style={{ height: '100vh', width: '100%' }} maxBounds={[ [29.62, -82.38], [29.66, -82.33] ]}>
