@@ -31,13 +31,13 @@ pins_collection = db.pins # Use a collection named 'pins'
 users_collection = db.users # Collection for user data
 
 # --- Admin Seeding ---
-def seed_admin_users():
+def seed_admin_user():
     """Creates admin users if they don't already exist."""
     admin_user = [
         {"username": "Spongebob", "password": "LeftoverLinks2025"},
     ]
 
-    for admin_data in admin_users:
+    for admin_data in admin_user:
         if not users_collection.find_one({"username": admin_data["username"]}):
             hashed_password = bcrypt.generate_password_hash(admin_data["password"]).decode('utf-8')
             users_collection.insert_one({
@@ -211,7 +211,7 @@ def login():
 # --- Run the Server ---
 if __name__ == "__main__":
     # Seed the database with admin users
-    seed_admin_users()
+    seed_admin_user()
     # The host='0.0.0.0' makes it accessible on your local network
     # The port is set to 5001 to avoid conflicts with the frontend's default port
     app.run(host='0.0.0.0', port=5001, debug=True, use_reloader=False)
