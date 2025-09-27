@@ -123,7 +123,7 @@ def create_pin(current_user):
         pin = {
             "description": data.get("description"),
             "location_name": data.get("location_name", "N/A"),
-            "coordinates": [lat, lng],
+            "coordinates": {"lat": data.get('coordinates')['lat'], "lng": data.get('coordinates')['lng']},            
             "createdAt": createdAt,
             "expiresAt": expiresAt,
             "user_id": current_user['_id'],
@@ -131,9 +131,8 @@ def create_pin(current_user):
         }
 
         result = pins_collection.insert_one(pin)
-        pin['_id'] = str(result.inserted_id) # Convert ObjectId to string for the response
-
-        return jsonify(serialize_doc(pin)), 201
+        newly_created_pin = pins_collection.find_one({'_id': result.inserted_id})
+        return jsonify(serialize_doc(newly_created_pin)), 201
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -201,7 +200,7 @@ def login():
         # Create a JWT token
         token = jwt.encode({
             'user_id': str(user['_id']),
-            'exp': datetime.utcnow() + datetime.timedelta(hours=24)
+            'exp': datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=24)
         }, app.config['SECRET_KEY'])
         
         return jsonify({'token': token})
