@@ -1,157 +1,105 @@
-import { useState, useEffect } from 'react';
+// In src/AddPinForm.jsx
+import React, { useState } from 'react';
 import axios from 'axios';
 
-const AddPinForm = ({ onClose }) => {
-  const [description, setDescription] = useState("");
-  const [locationName, setLocationName] = useState("");
+const AddPinForm = ({ onClose, onPinAdded }) => {
+  const [description, setDescription] = useState('');
+  const [locationName, setLocationName] = useState('');
   const [coordinates, setCoordinates] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [isGettingLocation, setIsGettingLocation] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState('');
 
-  const getLocationButtonContent = () => {
-    if (isGettingLocation) {
-      return (
-        <>
-          <div className="spinner"></div>
-          <span>Getting Location...</span>
-        </>
-      );
+  const handleGetLocation = () => {
+    if (!navigator.geolocation) {
+      setError('Geolocation is not supported by your browser.');
+      return;
     }
-    if (coordinates) {
-      return (
-        <span>✓ Location Found ({coordinates.lat.toFixed(4)}, {coordinates.lng.toFixed(4)})</span>
-      );
-    }
-    return <span>Get My Location</span>;
-  };
-
-  const getLocation = () => {
-    if (navigator.geolocation) {
-      setIsGettingLocation(true);
-      setError(null);
-      navigator.geolocation.getCurrentPosition((position) => {
-        const lat = position.coords.latitude;
-        const lng = position.coords.longitude;
-        console.log(`User is at: ${lat}, ${lng}`);
-        setCoordinates({ lat, lng });
-        setIsGettingLocation(false);
-      }, (error) => {
-        console.error("Error getting location:", error);
-        setError("Could not get your location. Please enable location services.");
-        setIsGettingLocation(false);
-      });
-    } else {
-      setError("Geolocation is not supported by this browser.");
-    }
+    setIsLoading(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setCoordinates({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        });
+        setIsLoading(false);
+      },
+      () => {
+        setError('Unable to retrieve your location.');
+        setIsLoading(false);
+      }
+    );
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!description || !locationName || !coordinates) {
-      setError("Please fill in all fields and get your location.");
+    if (!coordinates) {
+      setError('Please get your location first.');
+      return;
+    }
+    setIsLoading(true);
+    setError('');
+
+    // Get the token from Local Storage
+    const token = localStorage.getItem('eator_token');
+    if (!token) {
+      setError('You must be logged in to add a pin.');
+      setIsLoading(false);
       return;
     }
 
-    setError(null);
-    setIsLoading(true);
-    
     try {
-      await axios.post("https://remedios-funest-amply.ngrok-free.dev/api/pins", {
-        description,
-        location_name: locationName,
-        coordinates
-      });
-      
-      alert("Pin added successfully!");
-      // Reset form and close
-      setDescription("");
-      setLocationName("");
-      setCoordinates(null);
-      onClose();
+      await axios.post('https://your-ngrok-url/api/pins', 
+        {
+          description,
+          location_name: locationName,
+          coordinates,
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`, // Send the token
+            'ngrok-skip-browser-warning': 'true' // Don't forget this!
+          }
+        }
+      );
+      onPinAdded(); // Tell the App component to refresh the pins
+      onClose(); // Close the modal
     } catch (err) {
-      console.error("Error adding pin:", err);
-      setError("Failed to add pin. Please try again.");
+      setError(err.response?.data?.message || 'Failed to add pin.');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleOverlayClick = (e) => {
-    if (e.target === e.currentTarget) {
-      onClose();
-    }
-  };
-
-  // Handle escape key
-  useEffect(() => {
-    const handleEscape = (e) => {
-      if (e.key === 'Escape') {
-        onClose();
-      }
-    };
-    document.addEventListener('keydown', handleEscape);
-    return () => document.removeEventListener('keydown', handleEscape);
-  }, [onClose]);
-
   return (
     <div className="add-pin-overlay">
-      <div className="overlay-backdrop" onClick={handleOverlayClick} aria-hidden="true"></div>
+      <div className="overlay-backdrop" onClick={onClose} aria-hidden="true"/>
       <div className="add-pin-form">
         <div className="form-header">
-          <h2>Add New Pin</h2>
-          <button 
-            type="button" 
-            className="close-button"
-            onClick={onClose}
-            aria-label="Close form"
-          >
-            ×
-          </button>
+          <h2>Add a Pin</h2>
+          <button className="close-button" onClick={onClose}>&times;</button>
         </div>
-        
         <form onSubmit={handleSubmit}>
-          {error && <div className="error-message">{error}</div>}
-        
-        <input
-          type="text"
-          placeholder="Description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          disabled={isLoading}
-        />
-        
-        <input
-          type="text"
-          placeholder="Location Name"
-          value={locationName}
-          onChange={(e) => setLocationName(e.target.value)}
-          disabled={isLoading}
-        />
-        
-        <button 
-          type="button" 
-          onClick={getLocation}
-          disabled={isLoading || isGettingLocation}
-          className="location-button"
-        >
-          {getLocationButtonContent()}
-        </button>
-        
-        <button 
-          type="submit" 
-          disabled={isLoading || isGettingLocation}
-          className="submit-button"
-        >
-          {isLoading ? (
-            <>
-              <div className="spinner"></div>
-              Adding Pin...
-            </>
-          ) : (
-            "Add Pin"
-          )}
-        </button>
+          {error && <p className="error-message">{error}</p>}
+          <input
+            type="text"
+            placeholder="Description (e.g., Pizza slices)"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            required
+          />
+          <input
+            type="text"
+            placeholder="Location (e.g., Marston Basement)"
+            value={locationName}
+            onChange={(e) => setLocationName(e.target.value)}
+            required
+          />
+          <button type="button" onClick={handleGetLocation} className="location-button" disabled={isLoading}>
+            {isLoading ? 'Getting...' : (coordinates ? 'Location Captured!' : 'Get Current Location')}
+          </button>
+          <button type="submit" className="submit-button" disabled={isLoading}>
+            {isLoading ? <div className="spinner" /> : 'Add Pin'}
+          </button>
         </form>
       </div>
     </div>

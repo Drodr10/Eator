@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import MapComponent from './MapComponent'
 import AddPinForm from './AddPinForm'
+import AuthModal from './AuthForm';
 import './App.css'
 
 function App() {
   const [showAddPinForm, setShowAddPinForm] = useState(false);
+  const [showAuthForm, setShowAuthForm] = useState(false);
 
   const handleCloseForm = () => {
     setShowAddPinForm(false);
@@ -19,9 +21,17 @@ function App() {
       >
         +
       </button>
+      <button 
+        className="auth-button"
+        onClick={() => setShowAuthForm(true)}
+      >
+        Login
+      </button>
       {showAddPinForm && (
         <AddPinForm onClose={handleCloseForm} />
       )}
+      {showAuthForm && <AuthModal onClose={() => setShowAuthForm(false)} />}
+
     </div>
   )
 }
