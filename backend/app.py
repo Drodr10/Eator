@@ -6,13 +6,16 @@ from flask_cors import CORS
 from dotenv import load_dotenv
 from bson import ObjectId # Used to handle MongoDB's default _id format
 
+UF_SW_CORNER = (29.62725, -82.37236)
+UF_NE_CORNER = (29.660000, -82.300000)
+
 # Load environment variables from .env file
 load_dotenv()
 
 # Initialize Flask app
 app = Flask(__name__)
 # Enable CORS to allow your frontend to communicate with this server
-CORS(app)
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 # --- Database Connection ---
 MONGO_URI = os.getenv("MONGO_URI")
@@ -45,37 +48,29 @@ def get_all_pins():
 
 @app.route("/api/pins", methods=['POST'])
 def create_pin():
-    """Creates a new food pin."""
-    try:
-        data = request.get_json()
+    data = request.get_json()
+    coords = data.get('coordinates')
 
-        # Basic validation
-        if not data or 'description' not in data or 'coordinates' not in data:
-            return jsonify({"error": "Missing required fields"}), 400
+    if not coords:
+        return jsonify({"error": "Coordinates are required"}), 400
 
-        # Set creation and expiration times
-        createdAt = datetime.datetime.now(datetime.timezone.utc)
-        # Pin will expire in 1 hour (3600 seconds)
-        expiresAt = createdAt + datetime.timedelta(hours=1)
+    lat = coords.get('lat')
+    lng = coords.get('lng')
 
-        pin = {
-            "description": data.get("description"),
-            "location_name": data.get("location_name", "N/A"),
-            "coordinates": data.get("coordinates"), # Should be [latitude, longitude]
-            "createdAt": createdAt,
-            "expiresAt": expiresAt
-        }
+    # Check if the new pin is inside our updated geofence
+    is_lat_in_bounds = UF_SW_CORNER[0] < lat < UF_NE_CORNER[0]
+    is_lng_in_bounds = UF_SW_CORNER[1] < lng < UF_NE_CORNER[1]
 
-        result = pins_collection.insert_one(pin)
-        pin['_id'] = str(result.inserted_id) # Convert ObjectId to string for the response
+    if not (is_lat_in_bounds and is_lng_in_bounds):
+        return jsonify({"error": "Pin is outside the allowed area"}), 400
 
-        return jsonify(pin), 201
+    # If it's valid, proceed with saving to the database
+    # ...
 
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    return jsonify({"status": "success"}), 201
 
 # --- Run the Server ---
 if __name__ == "__main__":
     # The host='0.0.0.0' makes it accessible on your local network
     # The port is set to 5001 to avoid conflicts with the frontend's default port
-    app.run(host='0.0.0.0', port=5001, debug=True)
+    app.run(host='0.0.0.0', port=5001, debug=True, use_reloader=False)
