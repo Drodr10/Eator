@@ -58,17 +58,21 @@ print("TTL index on 'expiresAt' ensured.")
 # MongoDB documents have a special ObjectId that needs to be converted to a string
 def serialize_doc(doc):
     """Recursively convert ObjectId and datetime objects to strings."""
-    if isinstance(doc, list):
-        return [serialize_doc(item) for item in doc]
-    if isinstance(doc, dict):
-        for key, value in doc.items():
-            if isinstance(value, ObjectId):
-                doc[key] = str(value)
-            elif isinstance(value, datetime.datetime):
-                doc[key] = value.isoformat()
-            elif isinstance(value, (dict, list)):
-                serialize_doc(value)
-    return doc
+    try:
+        if isinstance(doc, list):
+            return [serialize_doc(item) for item in doc]
+        if isinstance(doc, dict):
+            for key, value in doc.items():
+                if isinstance(value, ObjectId):
+                    doc[key] = str(value)
+                elif isinstance(value, datetime.datetime):
+                    doc[key] = value.isoformat()
+                elif isinstance(value, (dict, list)):
+                    serialize_doc(value)
+        return doc
+    except Exception as e:
+        print(f"Error serializing document: {e}")
+        raise
 
 # --- Token Verification Decorator ---
 def token_required(f):
@@ -87,7 +91,8 @@ def token_required(f):
             data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
             current_user = users_collection.find_one({'_id': ObjectId(data['user_id'])})
         except Exception as e:
-            return jsonify({'message': 'Token is invalid!', 'error': str(e)}), 401
+            print(f"Error decoding token: {e}")  # Print the error for debugging
+            raise            
         
         # Pass the current user to the decorated function
         return f(current_user, *args, **kwargs)
@@ -102,8 +107,9 @@ def get_all_pins():
         pins = [serialize_doc(pin) for pin in pins_collection.find()]
         return jsonify(pins), 200
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
+        print(f"Error decoding token: {e}")  # Print the error for debugging      
+        raise
+    
 @app.route("/api/pins", methods=['POST'])
 @token_required
 def create_pin(current_user):
@@ -145,8 +151,9 @@ def create_pin(current_user):
         return jsonify(serialize_doc(newly_created_pin)), 201
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
+        print(f"Error decoding token: {e}")  # Print the error for debugging
+        raise
+    
 @app.route("/api/pins/<pin_id>", methods=['DELETE'])
 @token_required
 def delete_pin(current_user, pin_id):
@@ -169,8 +176,9 @@ def delete_pin(current_user, pin_id):
         return jsonify({"message": "Pin deleted successfully"}), 200
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
+        print(f"Error decoding token: {e}")  # Print the error for debugging
+        raise
+    
 @app.route('/api/signup', methods=['POST'])
 def signup():
     data = request.get_json()
