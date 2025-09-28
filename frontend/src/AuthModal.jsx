@@ -19,8 +19,8 @@ const AuthModal = ({ onClose, onLoginSuccess }) => {
     setError('');
 
     const url = isLoginMode 
-      ? 'https://remedios-funest-amply.ngrok-free.dev/api/login' 
-      : 'https://remedios-funest-amply.ngrok-free.dev/api/signup';
+      ? 'https://eator.onrender.com/api/login' 
+      : 'https://eator.onrender.com/api/signup';
 
     try {
       const res = await axios.post(url, credentials);

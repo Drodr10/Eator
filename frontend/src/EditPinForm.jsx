@@ -57,7 +57,7 @@ const EditPinForm = ({ pin, onClose, onPinUpdated }) => {
         const expiresAtISO = new Date(formData.expiresAt).toISOString();
         // ----------------------------------
 
-        await axios.put(`https://remedios-funest-amply.ngrok-free.dev/api/pins/${pin._id}`,
+        await axios.put(`https://eator.onrender.com/api/pins/${pin._id}`,
             { ...formData, expiresAt: expiresAtISO },
             { headers: { 'Authorization': `Bearer ${token}`, 'ngrok-skip-browser-warning': 'true' } }
         );

@@ -271,23 +271,6 @@ body, #root, .App {
   font-weight: 500;
   text-align: center;
 }
-.auth-button {
-  position: fixed;
-  top: 7px;
-  right: 20px;
-  padding: 10px 20px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  transition: all 0.2s ease;
-  z-index: 401; /* Ensure visibility over other elements */
-  margin-right: 20px; /* Adds spacing from the right side */
-}
 
 .auth-button:hover {
   background-color: #0056b3;
@@ -380,7 +363,8 @@ body.dark-mode .navbar {
   list-style: none;
   margin: 0;
   padding: 0;
-  margin-right: auto; /* Push the About link to the left */
+  margin-right: auto; 
+  gap: 20px;
 }
 
 .navbar-links li {
@@ -529,12 +513,7 @@ body.dark-mode .page-container p strong {
     padding: 10px 20px;
   }
 
-  .auth-button {
-    top: 10px;
-    right: 10px;
-    padding: 8px 16px;
-    font-size: 12px;
-  }
+
 
   h2 {
     font-size: 1.5rem;
@@ -555,4 +534,36 @@ body.dark-mode .page-container p strong {
   word-wrap: break-word;
   white-space: pre-wrap;
   overflow-wrap: break-word;
+}
+
+/* --- Mobile Responsiveness --- */
+
+/* This targets screens 600px wide or less (most phones) */
+@media (max-width: 600px) {
+
+  /* Make the modal forms take up more screen space */
+  .add-pin-form {
+    min-width: 90vw; /* Use viewport width instead of fixed pixels */
+    max-width: 95vw;
+    margin: 0 10px; /* Add a little space on the sides */
+  }
+
+  /* Make navbar text smaller */
+  .navbar h1 {
+    font-size: 1.2rem;
+  }
+  .navbar-links a, .auth-button {
+    font-size: 0.9rem;
+    padding: 8px 12px;
+  }
+  .navbar {
+    padding: 10px 15px;
+  }
+
+  /* Make the "Add a Pin" button a bit smaller */
+  .add-pin-button {
+    padding: 12px 20px;
+    font-size: 14px;
+    bottom: 20px;
+  }
 }

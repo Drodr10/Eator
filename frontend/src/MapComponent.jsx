@@ -32,8 +32,7 @@ const MapComponent = ({ refreshKey, onPinUpdated }) => {
 
     const getPins = async () => {
       try {
-        // const res = await axios.get("http://localhost:5001/api/pins");
-        const res = await axios.get("https://remedios-funest-amply.ngrok-free.dev/api/pins",
+        const res = await axios.get("https://eator.onrender.com/api/pins",
             { headers: { 'ngrok-skip-browser-warning': 'true' } }
         );
         setPins(res.data);
@@ -51,7 +50,7 @@ const MapComponent = ({ refreshKey, onPinUpdated }) => {
     
     try {
         const token = localStorage.getItem('eator_token');
-        await axios.delete(`https://remedios-funest-amply.ngrok-free.dev/api/pins/${pinId}`, {
+        await axios.delete(`https://eator.onrender.com/api/pins/${pinId}`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'ngrok-skip-browser-warning': 'true'

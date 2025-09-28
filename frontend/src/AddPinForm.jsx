@@ -49,7 +49,7 @@ const AddPinForm = ({ onClose, onPinAdded }) => {
     }
 
     try {
-      await axios.post('https://remedios-funest-amply.ngrok-free.dev/api/pins', 
+      await axios.post('https://eator.onrender.com/api/pins', 
         {
           description,
           location_name: locationName,
