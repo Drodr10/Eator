@@ -9,10 +9,14 @@ from flask_cors import CORS
 from dotenv import load_dotenv
 from bson import ObjectId 
 from functools import wraps
+from zoneinfo import ZoneInfo
 
 
 UF_SW_CORNER = (29.62725, -82.37236)
 UF_NE_CORNER = (29.660000, -82.300000)
+
+# Define the timezone for the application
+EASTERN = ZoneInfo("America/New_York")
 
 # Load environment variables from .env file
 load_dotenv()
@@ -133,8 +137,8 @@ def create_pin(current_user):
 
     # If it's valid, proceed with saving to the database
     try:
-        # Set creation and expiration times
-        createdAt = datetime.datetime.now(datetime.timezone.utc)
+        # Set creation and expiration times in Eastern Time
+        createdAt = datetime.datetime.now(EASTERN)
         duration_minutes = data.get("duration_minutes", 60)
         expiresAt = createdAt + datetime.timedelta(minutes=duration_minutes)
 
@@ -173,15 +177,17 @@ def edit_pin(current_user, pin_id):
         edit_data = request.get_json()
         edit_fields = {
             'description': edit_data.get('description'),
-            'location_name': edit_data.get('location_name'),
-            'duration_minutes': edit_data.get('duration_minutes')
+            'location_name': edit_data.get('location_name')
         }
+        # Remove keys with None values
+        edit_fields = {k: v for k, v in edit_fields.items() if v is not None}
         
         if 'expiresAt' in edit_data and edit_data['expiresAt']:
             try:
-                new_expiresAt = parser.isoparse(edit_data(['expiresAt']))
-                if new_expiresAt < datetime.datetime.now(datetime.timezone.utc):
-                    return jsonify({"message":"Expiration date cannot be in the past"}), 400
+                # Parse the new expiration date from the provided calendar/clock format
+                new_expiresAt = parser.isoparse(edit_data['expiresAt'])
+                if new_expiresAt < datetime.datetime.now(EASTERN):
+                    return jsonify({"message": "Expiration date cannot be in the past"}), 400
             
                 edit_fields['expiresAt'] = new_expiresAt
             except:
@@ -193,10 +199,11 @@ def edit_pin(current_user, pin_id):
         )
         edited_pin = pins_collection.find_one({'_id': ObjectId(pin_id)})
         return jsonify(serialize_doc(edited_pin)), 200
-    except Exception as e:
-        print(f"Error decoding token: {e}")
-        raise
     
+    except Exception as e:
+        print(f"Error decoding token: {e}")  # Print the error for debugging
+        raise
+        
 @app.route("/api/pins/<pin_id>", methods=['DELETE'])
 @token_required
 def delete_pin(current_user, pin_id):
@@ -261,7 +268,7 @@ def login():
         # Create a JWT token
         token = jwt.encode({
             'user_id': str(user['_id']),
-            'exp': datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=24)
+            'exp': datetime.datetime.now(EASTERN) + datetime.timedelta(hours=24)
         }, app.config['SECRET_KEY'])
         
         return jsonify({'token': token})
