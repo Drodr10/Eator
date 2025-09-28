@@ -3,11 +3,14 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 
+import EditPinForm from './EditPinForm.jsx';
+
 const position = [29.6436, -82.3549];
 
 const MapComponent = ({ refreshKey }) => {
   const [pins, setPins] = useState([]);
   const [user, setUser] = useState(null);
+  const [editingPin, setEditingPin] = useState(null);
 
   const getUserFromToken = () => {
     const token = localStorage.getItem('eator_token');
@@ -61,6 +64,7 @@ const MapComponent = ({ refreshKey }) => {
   };
 
   return (
+    <>
     <MapContainer center={position} minZoom={14} zoom={15} style={{ height: '100vh', width: '100%' }} maxBounds={[ [29.62, -82.38], [29.66, -82.33] ]}>
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -79,9 +83,9 @@ const MapComponent = ({ refreshKey }) => {
                 
                 {/* Conditionally render buttons */}
                 {canModify && (
-                  <div className="popup-buttons" style={{ marginTop: '10px' }}>
-                    <button style={{ marginRight: '5px' }}>Edit</button>
-                    <button onClick={() => handleDelete(pin._id)}>Delete</button>
+                  <div className="popup-buttons">
+                    <button className="edit-button" onClick={() => setEditingPin(pin)}>Edit</button>
+                    <button className="delete-button" onClick={() => handleDelete(pin._id)}>Delete</button>
                   </div>
                 )}
             </Popup>
@@ -89,6 +93,18 @@ const MapComponent = ({ refreshKey }) => {
         );
       })}
     </MapContainer>
+
+    {editingPin && (
+      <EditPinForm 
+        pin={editingPin}
+        onClose={() => setEditingPin(null)}
+        onPinUpdated={() => {
+          onPinUpdated();
+          setEditingPin(null);
+        }}
+      />
+    )}
+  </>
   );
 };
 

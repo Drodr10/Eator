@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 
 // This component reuses the CSS from your AddPinForm
-const AuthModal = ({ onClose }) => {
+const AuthModal = ({ onClose, onLoginSuccess }) => {
   const [isLoginMode, setIsLoginMode] = useState(true);
   const [credentials, setCredentials] = useState({ username: '', password: '' });
   const [error, setError] = useState('');
@@ -26,7 +26,7 @@ const AuthModal = ({ onClose }) => {
       const res = await axios.post(url, credentials);
       if (isLoginMode) {
         localStorage.setItem('eator_token', res.data.token);
-        alert('Login Successful!');
+        onLoginSuccess();
       } else {
         alert('Signup successful! Please log in.');
         setIsLoginMode(true); // Switch to login view after signup
@@ -67,6 +67,7 @@ const AuthModal = ({ onClose }) => {
             type="text"
             name="username"
             placeholder="Username"
+            autoComplete="username"
             value={credentials.username}
             onChange={handleInputChange}
             required
@@ -75,6 +76,7 @@ const AuthModal = ({ onClose }) => {
             type="password"
             name="password"
             placeholder="Password"
+            autoComplete="current-password"
             value={credentials.password}
             onChange={handleInputChange}
             required

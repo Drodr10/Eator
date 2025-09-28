@@ -6,6 +6,7 @@ const AddPinForm = ({ onClose, onPinAdded }) => {
   const [description, setDescription] = useState('');
   const [locationName, setLocationName] = useState('');
   const [coordinates, setCoordinates] = useState(null);
+  const [duration, setDuration] = useState(60);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -53,6 +54,7 @@ const AddPinForm = ({ onClose, onPinAdded }) => {
           description,
           location_name: locationName,
           coordinates,
+          duration_minutes: duration,
         },
         {
           headers: {
@@ -94,6 +96,17 @@ const AddPinForm = ({ onClose, onPinAdded }) => {
             onChange={(e) => setLocationName(e.target.value)}
             required
           />
+          <select
+            value={duration}
+            onChange={(e) => setDuration(parseInt(e.target.value))}
+            className="form-input"
+            required
+            >
+            <option value={15}>15 minutes</option>
+            <option value={30}>30 minutes</option>
+            <option value={60}>1 hour</option>
+            <option value={120}>2 hours</option>
+            </select>
           <button type="button" onClick={handleGetLocation} className="location-button" disabled={isLoading}>
             {isLoading ? 'Getting...' : (coordinates ? 'Location Captured!' : 'Get Current Location')}
           </button>
