@@ -52,24 +52,30 @@ function App() {
 
 
   return (
-    <Router>
-      <div className="App">
-        <Navbar 
-          isLoggedIn={isLoggedIn} 
-          handleLogout={handleLogout} 
-          setShowAuthModal={setShowAuthModal} 
-        />
-        <Routes>
-          <Route path="/" element={<><MapComponent refreshKey={refreshKey} onPinUpdated={handlePinAdded} /><button className="add-pin-button" onClick={handleOpenAddPin}>Add a Pin</button></>} />
-          <Route path="/about" element={<About />} />
-        </Routes>
+    <div className="App">
+      <Navbar 
+        isLoggedIn={isLoggedIn} 
+        handleLogout={handleLogout} 
+        setShowAuthModal={setShowAuthModal} 
+      />
+      <Routes>
+        <Route path="/" element={<><MapComponent refreshKey={refreshKey} onPinUpdated={handlePinAdded} /><button className="add-pin-button" onClick={handleOpenAddPin}>Add a Pin</button></>} />
+        <Route path="/about" element={<About />} />
+      </Routes>
 
-        {/* Modals */}
-        {showAuthModal && <AuthModal onClose={() => setShowAuthModal(false)} onLoginSuccess={handleLoginSuccess} />}
-        {showAddPinModal && <AddPinForm onClose={() => setShowAddPinModal(false)} onPinAdded={handlePinAdded} />}
-      </div>
+      {/* Modals */}
+      {showAuthModal && <AuthModal onClose={() => setShowAuthModal(false)} onLoginSuccess={handleLoginSuccess} />}
+      {showAddPinModal && <AddPinForm onClose={() => setShowAddPinModal(false)} onPinAdded={handlePinAdded} />}
+    </div>
+  );
+}
+
+function AppWrapper() {
+  return (
+    <Router>
+      <App />
     </Router>
   );
 }
 
-export default App;
+export default AppWrapper;
