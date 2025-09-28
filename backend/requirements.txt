@@ -1,0 +1,9 @@
+Flask
+Flask-Bcrypt
+PyMongo
+Flask-Cors
+python-dotenv
+PyJWT
+python-dateutil
+gunicorn
+tzdata
