@@ -39,6 +39,16 @@ const EditPinForm = ({ pin, onClose, onPinUpdated }) => {
     setIsLoading(true);
     setError('');
 
+    const now = new Date();
+    const selectedExpiration = new Date(formData.expiresAt);
+    const sixHoursLater = new Date(now.getTime() + 6 * 60 * 60 * 1000);
+
+    if (selectedExpiration > sixHoursLater) {
+      setError('Expiration time cannot exceed 6 hours from now.');
+      setIsLoading(false);
+      return;
+    }
+
     const token = localStorage.getItem('eator_token');
     try {
         // --- THIS IS THE FIX for submitting ---

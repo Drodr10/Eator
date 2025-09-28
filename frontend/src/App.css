@@ -18,6 +18,18 @@ body, #root, .App {
   color: var(--text-dark); /* Light text */
 }
 
+.App {
+  background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1)),
+              linear-gradient(to bottom, #4facfe, #00f2fe); /* Enhanced glass-like effect */
+  background-blend-mode: overlay;
+  backdrop-filter: blur(10px); /* Adds a frosted glass blur effect */
+  border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle border for glass effect */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
 .map-container {
   position: absolute;
   top: 0;
@@ -25,7 +37,11 @@ body, #root, .App {
   width: 100%;
   height: 100%;
   background-color: #1e1e1e; /* Slightly lighter dark background */
+  margin: 0; /* Ensure no margin */
+  padding: 0; /* Ensure no padding */
+  box-sizing: border-box; /* Include padding and border in width/height */
 }
+
 .add-pin-button {
   position: absolute;
   bottom: 30px;
@@ -270,6 +286,7 @@ body, #root, .App {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   transition: all 0.2s ease;
   z-index: 401; /* Ensure visibility over other elements */
+  margin-right: 20px; /* Adds spacing from the right side */
 }
 
 .auth-button:hover {
@@ -293,6 +310,15 @@ body, #root, .App {
 
 .auth-button.logout:hover {
   background-color: #c82333;
+}
+
+@media (max-width: 768px) {
+  .auth-button {
+    top: 10px;
+    right: 10px;
+    padding: 8px 16px;
+    font-size: 12px;
+  }
 }
 
 .popup-buttons {
@@ -488,5 +514,38 @@ body.dark-mode .page-container p strong {
   .page-container p {
     font-size: 1.2rem; /* Larger font size for paragraphs on bigger screens */
     line-height: 1.8; /* Adjust line height for better readability */
+  }
+}
+
+@media (max-width: 768px) {
+  .App {
+    /* Removed padding to avoid interfering with the map layout */
+    padding: 0;
+  }
+
+  .add-pin-button {
+    bottom: 20px;
+    font-size: 14px;
+    padding: 10px 20px;
+  }
+
+  .auth-button {
+    top: 10px;
+    right: 10px;
+    padding: 8px 16px;
+    font-size: 12px;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  p {
+    font-size: 0.9rem;
+  }
+
+  .Navbar {
+    flex-wrap: wrap; /* Allow items to wrap on smaller screens */
+    justify-content: space-between; /* Distribute items evenly */
   }
 }

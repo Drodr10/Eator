@@ -63,17 +63,6 @@ function App() {
           <Route path="/about" element={<About />} />
         </Routes>
 
-        {/* Login/Signup Button */}
-        {isLoggedIn ? (
-        <button className="auth-button" style={{ backgroundColor: 'red'}} onClick={handleLogout}>
-          Logout
-        </button>
-        ) : (
-        <button className="auth-button" onClick={() => setShowAuthModal(true)}>
-          Login / Sign Up
-        </button>
-        )}
-
         {/* Modals */}
         {showAuthModal && <AuthModal onClose={() => setShowAuthModal(false)} onLoginSuccess={handleLoginSuccess} />}
         {showAddPinModal && <AddPinForm onClose={() => setShowAddPinModal(false)} onPinAdded={handlePinAdded} />}
