@@ -24,7 +24,8 @@ load_dotenv()
 # Initialize Flask app
 app = Flask(__name__)
 # Enable CORS to allow your frontend to communicate with this server
-CORS(app, resources={r"/api/*": {"origins": "*"}})
+frontend_url = os.getenv("FRONTEND_URL", "http://localhost:5173")
+CORS(app, resources={r"/api/*": {"origins": [frontend_url, "https://eator.vercel.app/"]}})
 bcrypt = Bcrypt(app)
 # You'll need to set a secret key to sign the JWTs
 app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
