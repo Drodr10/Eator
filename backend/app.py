@@ -2,7 +2,6 @@ import os
 import datetime
 import jwt
 from flask import Flask, request, jsonify
-from dateutil import parser
 from flask_bcrypt import Bcrypt
 from pymongo import MongoClient
 from flask_cors import CORS
