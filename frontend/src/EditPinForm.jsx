@@ -6,15 +6,21 @@ const EditPinForm = ({ pin, onClose, onPinUpdated }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
+  // Get the current time in the format required by the datetime-local input
   const now = new Date();
-  now.setMinutes(now.getMinutes() - now.getTimezoneOffset()); // Adjust for timezone
-  const minDateTime = now.toISOString().slice(0, 16); // Format for datetime-local input
+  now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+  const minDateTime = now.toISOString().slice(0, 16);
   
   // Pre-fill the form when the component loads
   useEffect(() => {
     if (pin) {
-      // Format the date for the datetime-local input
-      const localExpiresAt = new Date(pin.expiresAt).toISOString().slice(0, 16);
+      // --- THIS IS THE FIX for pre-filling ---
+      const date = new Date(pin.expiresAt);
+      // Adjust for the browser's timezone before slicing
+      date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
+      const localExpiresAt = date.toISOString().slice(0, 16);
+      // ------------------------------------
+      
       setFormData({
         description: pin.description,
         location_name: pin.location_name,
@@ -35,18 +41,26 @@ const EditPinForm = ({ pin, onClose, onPinUpdated }) => {
 
     const token = localStorage.getItem('eator_token');
     try {
-      // Convert the local time back to a full ISO string for the backend
-      const expiresAtISO = new Date(formData.expiresAt).toISOString();
-      await axios.put(`https://remedios-funest-amply.ngrok-free.dev/api/pins/${pin._id}`,
-        { ...formData, expiresAt: expiresAtISO },
-        { headers: { 'Authorization': `Bearer ${token}`, 'ngrok-skip-browser-warning': 'true' } }
-      );
-      onPinUpdated();
-      onClose();
+        // --- THIS IS THE FIX for submitting ---
+        // Creating a Date from the input string and converting to ISO
+        // correctly handles the conversion from local time to UTC.
+        const expiresAtISO = new Date(formData.expiresAt).toISOString();
+        // ----------------------------------
+
+        await axios.put(`https://remedios-funest-amply.ngrok-free.dev/api/pins/${pin._id}`,
+            { ...formData, expiresAt: expiresAtISO },
+            { headers: { 'Authorization': `Bearer ${token}`, 'ngrok-skip-browser-warning': 'true' } }
+        );
+
+        if (onPinUpdated) {
+            onPinUpdated();
+        }
+        onClose();
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to update pin.');
+        console.error(err);
+        setError(err.response?.data?.message || 'Failed to update pin.');
     } finally {
-      setIsLoading(false);
+        setIsLoading(false);
     }
   };
 

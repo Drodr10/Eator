@@ -1,3 +1,12 @@
+:root {
+  --background-light: #f3f4f6;
+  --background-dark: #2d3748;
+  --text-light: #2d3748;
+  --text-dark: #f3f4f6;
+  --accent-light: #63b3ed;
+  --accent-dark: #2b6cb0;
+}
+
 body, #root, .App {
   margin: 0;
   padding: 0;
@@ -5,8 +14,8 @@ body, #root, .App {
   width: 100vw;
   overflow: hidden;
   position: relative;
-  background-color: #121212; /* Dark background */
-  color: #ffffff; /* Light text */
+  background-color: var(--background-dark); /* Dark background */
+  color: var(--text-dark); /* Light text */
 }
 
 .map-container {
@@ -268,6 +277,24 @@ body, #root, .App {
   transform: scale(1.05);
 }
 
+.auth-button.login {
+  background-color: #28a745; /* Green for login */
+  color: #ffffff;
+}
+
+.auth-button.login:hover {
+  background-color: #218838;
+}
+
+.auth-button.logout {
+  background-color: #dc3545; /* Red for logout */
+  color: #ffffff;
+}
+
+.auth-button.logout:hover {
+  background-color: #c82333;
+}
+
 .popup-buttons {
   display: flex;
   justify-content: center;
@@ -297,4 +324,169 @@ body, #root, .App {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: var(--accent-light);
+  color: var(--text-light);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+body.dark-mode .navbar {
+  background-color: var(--accent-dark);
+  color: var(--text-dark);
+}
+
+.navbar h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.navbar-links {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  margin-right: auto; /* Push the About link to the left */
+}
+
+.navbar-links li {
+  margin-left: 20px;
+  margin-right: 20px; /* Add spacing to separate About button from other elements */
+}
+
+.navbar-links a {
+  text-decoration: none;
+  color: #ffffff;
+  font-size: 1rem;
+  transition: color 0.2s;
+}
+
+.navbar-links a:hover {
+  color: #aaaaaa;
+}
+
+.navbar .login-button {
+  margin-left: 20px; /* Ensure spacing from other elements */
+  padding: 5px 10px;
+  background-color: #333333;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  align-self: center;
+}
+
+.navbar .login-button:hover {
+  background-color: #444444;
+}
+
+.navbar .auth-button {
+  margin-left: auto; /* Push the button to the far right */
+  padding: 5px 15px;
+  background-color: #333333;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.navbar .auth-button:hover {
+  background-color: #444444;
+}
+
+.navbar .auth-button.login {
+  background-color: #28a745; /* Green for login */
+  color: #ffffff;
+}
+
+.navbar .auth-button.login:hover {
+  background-color: #218838;
+}
+
+.navbar .auth-button.logout {
+  background-color: #dc3545; /* Red for logout */
+  color: #ffffff;
+}
+
+.navbar .auth-button.logout:hover {
+  background-color: #c82333;
+}
+
+.page-container {
+  max-width: 800px; /* Limit the width of the content */
+  margin: 0 auto; /* Center the content horizontally */
+  text-align: justify; /* Optional: Justify text for better readability */
+  padding: 40px;
+  background: linear-gradient(135deg, var(--background-light), var(--accent-light));
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 1s ease-in-out;
+  margin-top: 20px; /* Add space between the navbar and the container */
+}
+
+.page-container h2 {
+  text-align: center;
+  font-size: 2rem;
+  color: var(--accent-light);
+  margin-bottom: 20px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.page-container p {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #4a5568;
+  margin-bottom: 20px;
+}
+
+.page-container p strong {
+  color: var(--accent-light);
+}
+
+body.dark-mode .page-container p strong {
+  color: var(--accent-dark);
+}
+
+.page-container p:last-child {
+  margin-bottom: 0;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (min-width: 768px) {
+  .navbar .auth-button {
+    font-size: 1.2rem; /* Larger font size for bigger screens */
+  }
+
+  .navbar h1 {
+    font-size: 2rem; /* Larger title font size for bigger screens */
+  }
+
+  .navbar-links a {
+    font-size: 1.1rem; /* Larger link font size for bigger screens */
+  }
+
+  .page-container p {
+    font-size: 1.2rem; /* Larger font size for paragraphs on bigger screens */
+    line-height: 1.8; /* Adjust line height for better readability */
+  }
 }

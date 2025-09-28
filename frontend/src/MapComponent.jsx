@@ -8,7 +8,7 @@ import EditPinForm from './EditPinForm.jsx';
 
 const position = [29.6436, -82.3549];
 
-const MapComponent = ({ refreshKey }) => {
+const MapComponent = ({ refreshKey, onPinUpdated }) => {
   const [pins, setPins] = useState([]);
   const [user, setUser] = useState(null);
   const [editingPin, setEditingPin] = useState(null);
@@ -81,8 +81,8 @@ const MapComponent = ({ refreshKey }) => {
                <p><strong>{pin.description}</strong></p>
                 <p>Location: {pin.location_name}</p>
                 <p><small>Posted by: {pin.username}</small></p>
-                
-                <Countdown expiresAt={pin.expiresAt} />
+                {console.log("Pin expires at:", pin.expiresAt)}
+                <Countdown expiresAt={String(pin.expiresAt)} />
 
                 {canModify && (
                   <div className="popup-buttons">
@@ -101,8 +101,8 @@ const MapComponent = ({ refreshKey }) => {
         pin={editingPin}
         onClose={() => setEditingPin(null)}
         onPinUpdated={() => {
-          onPinUpdated();
-          setEditingPin(null);
+            if (onPinUpdated) onPinUpdated();
+            setEditingPin(null);
         }}
       />
     )}

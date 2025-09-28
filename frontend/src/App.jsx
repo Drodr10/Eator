@@ -1,7 +1,10 @@
 import { useState, useCallback, useEffect } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import MapComponent from './MapComponent';
 import AuthModal from './AuthModal';
 import AddPinForm from './AddPinForm'; 
+import Navbar from './Navbar';
+import About from './About';
 import './App.css';
 
 
@@ -48,30 +51,34 @@ function App() {
 
 
   return (
-    <div className="App">
-      {/* Pass the refreshKey to MapComponent */}
-      <MapComponent refreshKey={refreshKey} onPinUpdated={handlePinAdded} />
+    <Router>
+      <div className="App">
+        <Navbar 
+          isLoggedIn={isLoggedIn} 
+          handleLogout={handleLogout} 
+          setShowAuthModal={setShowAuthModal} 
+        />
+        <Routes>
+          <Route path="/" element={<><MapComponent refreshKey={refreshKey} onPinUpdated={handlePinAdded} /><button className="add-pin-button" onClick={handleOpenAddPin}>Add a Pin</button></>} />
+          <Route path="/about" element={<About />} />
+        </Routes>
 
-      {/* Login/Signup Button */}
-      {isLoggedIn ? (
-      <button className="auth-button" style={{ backgroundColor: 'red'}} onClick={handleLogout}>
-        Logout
-      </button>
-      ) : (
-      <button className="auth-button" onClick={() => setShowAuthModal(true)}>
-        Login / Sign Up
-      </button>
-      )}
+        {/* Login/Signup Button */}
+        {isLoggedIn ? (
+        <button className="auth-button" style={{ backgroundColor: 'red'}} onClick={handleLogout}>
+          Logout
+        </button>
+        ) : (
+        <button className="auth-button" onClick={() => setShowAuthModal(true)}>
+          Login / Sign Up
+        </button>
+        )}
 
-      {/* Add Pin Pill Button */}
-      <button className="add-pin-button" onClick={handleOpenAddPin}>
-        Add a Pin
-      </button>
-
-      {/* Modals */}
-      {showAuthModal && <AuthModal onClose={() => setShowAuthModal(false)} onLoginSuccess={handleLoginSuccess} />}
-      {showAddPinModal && <AddPinForm onClose={() => setShowAddPinModal(false)} onPinAdded={handlePinAdded} />}
-    </div>
+        {/* Modals */}
+        {showAuthModal && <AuthModal onClose={() => setShowAuthModal(false)} onLoginSuccess={handleLoginSuccess} />}
+        {showAddPinModal && <AddPinForm onClose={() => setShowAddPinModal(false)} onPinAdded={handlePinAdded} />}
+      </div>
+    </Router>
   );
 }
 
