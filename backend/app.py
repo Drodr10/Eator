@@ -2,12 +2,14 @@ import os
 import datetime
 import jwt
 from flask import Flask, request, jsonify
+from dateutil import parser
 from flask_bcrypt import Bcrypt
 from pymongo import MongoClient
 from flask_cors import CORS
 from dotenv import load_dotenv
-from bson import ObjectId # Used to handle MongoDB's default _id format
+from bson import ObjectId 
 from functools import wraps
+
 
 UF_SW_CORNER = (29.62725, -82.37236)
 UF_NE_CORNER = (29.660000, -82.300000)
@@ -110,7 +112,7 @@ def get_all_pins():
         print(f"Error decoding token: {e}")  # Print the error for debugging      
         raise
     
-@app.route("/api/pins", methods=['POST'])
+@app.route("/api/pins", methods=['PUT'])
 @token_required
 def create_pin(current_user):
     data = request.get_json()
@@ -133,12 +135,13 @@ def create_pin(current_user):
     try:
         # Set creation and expiration times
         createdAt = datetime.datetime.now(datetime.timezone.utc)
-        # Pin will expire in 1 hour (3600 seconds)
-        expiresAt = createdAt + datetime.timedelta(hours=1)
+        duration_minutes = data.get("duration_minutes", 60)
+        expiresAt = createdAt + datetime.timedelta(minutes=duration_minutes)
 
         pin = {
             "description": data.get("description"),
             "location_name": data.get("location_name", "N/A"),
+            "duration_minutes": data.get("duration_minutes"),
             "coordinates": {"lat": data.get('coordinates')['lat'], "lng": data.get('coordinates')['lng']},            
             "createdAt": createdAt,
             "expiresAt": expiresAt,
@@ -152,6 +155,40 @@ def create_pin(current_user):
 
     except Exception as e:
         print(f"Error decoding token: {e}")  # Print the error for debugging
+        raise
+    
+@app.route("/api/pins/<pin_id>", methods=['POST'])
+@token_required
+def edit_pin(current_user, pin_id):
+    try:
+        pin = pins_collection.find_one({'_id': ObjectId(pin_id)})
+        
+        if not pin:
+            return jsonify({"message": "Pin not found"}), 404
+        
+        is_admin = current_user.get('role') == 'Admin'
+        if pin['user_id'] != current_user['_id'] and not is_admin:
+            return jsonify({"message": "You are not authorized to edit this pin"}), 403
+        
+        edit_data = request.get_json()
+        edit_fields = {
+            'description': edit_data.get('description'),
+            'location_name': edit_data.get('location_name'),
+            'duration_minutes': edit_data.get('duration_minutes')
+        }
+        
+        createdAt = pin.get("createdAt", datetime.datetime.now(datetime.timezone.utc))
+        duration_minutes = pin.get("duration_minutes", 60)
+        expiresAt = createdAt + datetime.timedelta(minutes=duration_minutes)
+
+        pins_collection.update_one(
+            {'_id': ObjectId(pin_id)},
+            {'$set': edit_fields}
+        )
+        edited_pin = pins_collection.find_one({'_id': ObjectId(pin_id)})
+        return jsonify(serialize_doc(edited_pin)), 200
+    except Exception as e:
+        print(f"Error decoding token: {e}")
         raise
     
 @app.route("/api/pins/<pin_id>", methods=['DELETE'])
