@@ -13,16 +13,16 @@ body, #root, .App {
   height: 100vh;
   width: 100vw;
   position: relative;
-  background-color: var(--background-dark); /* Dark background */
-  color: var(--text-dark); /* Light text */
+  background-color: var(--background-dark);
+  color: var(--text-dark);
 }
 
 .App {
   background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1)),
-              linear-gradient(to bottom, #4facfe, #00f2fe); /* Enhanced glass-like effect */
+              linear-gradient(to bottom, #4facfe, #00f2fe);
   background-blend-mode: overlay;
-  backdrop-filter: blur(10px); /* Adds a frosted glass blur effect */
-  border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle border for glass effect */
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -36,10 +36,10 @@ body, #root, .App {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: #1e1e1e; /* Slightly lighter dark background */
-  margin: 0; /* Ensure no margin */
-  padding: 0; /* Ensure no padding */
-  box-sizing: border-box; /* Include padding and border in width/height */
+  background-color: #1e1e1e; 
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 .add-pin-button {
@@ -48,24 +48,25 @@ body, #root, .App {
   left: 50%;
   transform: translateX(-50%); /* This centers the button */
   padding: 15px 25px;
-  background-color: #333333; /* Darker button */
-  color: #ffffff; /* Light text */
+  background-color: #333333;
+  color: #ffffff;
   border: none;
-  border-radius: 30px; /* This makes it a "pill" shape */
+  border-radius: 30px;
   font-size: 16px;
   font-weight: 600;
   box-shadow: 0 4px 12px rgba(0,0,0,0.3);
   cursor: pointer;
   z-index: 1000;
-  backdrop-filter: blur(5px); /* Cool glass effect */
+  backdrop-filter: blur(5px);
   transition: all 0.2s ease;
 }
 
 .add-pin-button:hover {
-  background-color: #444444; /* Slightly lighter on hover */
+  background-color: #444444;
   transform: translateX(-50%) scale(1.03);
 }
-/* Add Pin Form Styles */
+
+
 .add-pin-overlay {
   position: fixed;
   top: 0;
@@ -148,7 +149,8 @@ body, #root, .App {
   transition: border-color 0.2s ease;
   
 }
-/* Add border between dropdown choices */
+
+
 .form-select option {
   border-bottom: 1px solid #444444;
   padding: 8px;
@@ -246,7 +248,6 @@ body, #root, .App {
   opacity: 0.7;
 }
 
-/* Loading Spinner */
 .spinner {
   width: 16px;
   height: 16px;
@@ -261,7 +262,6 @@ body, #root, .App {
   100% { transform: rotate(360deg); }
 }
 
-/* Error Message */
 .error-message {
   background-color: #ff4757;
   color: white;
@@ -278,7 +278,7 @@ body, #root, .App {
 }
 
 .auth-button.login {
-  background-color: #28a745; /* Green for login */
+  background-color: #28a745; 
   color: #ffffff;
 }
 
@@ -287,7 +287,7 @@ body, #root, .App {
 }
 
 .auth-button.logout {
-  background-color: #dc3545; /* Red for logout */
+  background-color: #dc3545; 
   color: #ffffff;
 }
 
@@ -369,7 +369,7 @@ body.dark-mode .navbar {
 
 .navbar-links li {
   margin-left: 20px;
-  margin-right: 20px; /* Add spacing to separate About button from other elements */
+  margin-right: 20px; 
 }
 
 .navbar-links a {
@@ -384,7 +384,7 @@ body.dark-mode .navbar {
 }
 
 .navbar .login-button {
-  margin-left: 20px; /* Ensure spacing from other elements */
+  margin-left: 20px; 
   padding: 5px 10px;
   background-color: #333333;
   color: #ffffff;
@@ -400,7 +400,7 @@ body.dark-mode .navbar {
 }
 
 .navbar .auth-button {
-  margin-left: auto; /* Push the button to the far right */
+  margin-left: auto; 
   padding: 5px 15px;
   background-color: #333333;
   color: #ffffff;
@@ -415,7 +415,7 @@ body.dark-mode .navbar {
 }
 
 .navbar .auth-button.login {
-  background-color: #28a745; /* Green for login */
+  background-color: #28a745; 
   color: #ffffff;
 }
 
@@ -424,7 +424,7 @@ body.dark-mode .navbar {
 }
 
 .navbar .auth-button.logout {
-  background-color: #dc3545; /* Red for logout */
+  background-color: #dc3545; 
   color: #ffffff;
 }
 
@@ -433,15 +433,15 @@ body.dark-mode .navbar {
 }
 
 .page-container {
-  max-width: 800px; /* Limit the width of the content */
-  margin: 0 auto; /* Center the content horizontally */
-  text-align: justify; /* Optional: Justify text for better readability */
+  max-width: 800px; 
+  margin: 0 auto; 
+  text-align: justify; 
   padding: 40px;
   background: linear-gradient(135deg, var(--background-light), var(--accent-light));
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   animation: fadeIn 1s ease-in-out;
-  margin-top: 20px; /* Add space between the navbar and the container */
+  margin-top: 20px; 
 }
 
 .page-container h2 {
@@ -484,26 +484,26 @@ body.dark-mode .page-container p strong {
 
 @media (min-width: 768px) {
   .navbar .auth-button {
-    font-size: 1.2rem; /* Larger font size for bigger screens */
+    font-size: 1.2rem; 
   }
 
   .navbar h1 {
-    font-size: 2rem; /* Larger title font size for bigger screens */
+    font-size: 2rem; 
   }
 
   .navbar-links a {
-    font-size: 1.1rem; /* Larger link font size for bigger screens */
+    font-size: 1.1rem; 
   }
 
   .page-container p {
-    font-size: 1.2rem; /* Larger font size for paragraphs on bigger screens */
-    line-height: 1.8; /* Adjust line height for better readability */
+    font-size: 1.2rem; 
+    line-height: 1.8; 
   }
 }
 
 @media (max-width: 768px) {
   .App {
-    /* Removed padding to avoid interfering with the map layout */
+    
     padding: 0;
   }
 
@@ -524,13 +524,13 @@ body.dark-mode .page-container p strong {
   }
 
   .Navbar {
-    flex-wrap: wrap; /* Allow items to wrap on smaller screens */
-    justify-content: space-between; /* Distribute items evenly */
+    flex-wrap: wrap; 
+    justify-content: space-between; 
   }
 }
 
 .popup {
-  max-width: 300px; /* Constrain the width of the popup */
+  max-width: 300px; 
   word-wrap: break-word;
   white-space: pre-wrap;
   overflow-wrap: break-word;
@@ -538,17 +538,16 @@ body.dark-mode .page-container p strong {
 
 /* --- Mobile Responsiveness --- */
 
-/* This targets screens 600px wide or less (most phones) */
 @media (max-width: 600px) {
 
-  /* Make the modal forms take up more screen space */
+  
   .add-pin-form {
-    min-width: 90vw; /* Use viewport width instead of fixed pixels */
+    min-width: 90vw; 
     max-width: 95vw;
-    margin: 0 10px; /* Add a little space on the sides */
+    margin: 0 10px; 
   }
 
-  /* Make navbar text smaller */
+  
   .navbar h1 {
     font-size: 1.2rem;
   }
@@ -560,7 +559,6 @@ body.dark-mode .page-container p strong {
     padding: 10px 15px;
   }
 
-  /* Make the "Add a Pin" button a bit smaller */
   .add-pin-button {
     padding: 12px 20px;
     font-size: 14px;

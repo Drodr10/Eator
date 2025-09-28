@@ -2,20 +2,18 @@ import React, { useState, useEffect } from 'react';
 
 const Countdown = ({ expiresAt }) => {
   const calculateTimeLeft = () => {
-    const expirationTime = new Date(expiresAt + 'Z'); // Ensure it's treated as UTC
+    const expirationTime = new Date(expiresAt + 'Z');
     const currentTime = new Date();
     const difference = expirationTime - currentTime;
-    console.log("Time left in milliseconds:", difference);
-    console.log("Expiration time:", expirationTime);
-    console.log("Current time:", currentTime);
+
     let timeLeft = {};
 
     if (difference > 0) {
-    timeLeft = {
-      hours: Math.floor((difference / (1000 * 60 * 60))),
-      minutes: Math.floor((difference / 1000 / 60) % 60),
-      seconds: Math.floor((difference / 1000) % 60),
-    };
+      timeLeft = {
+        hours: Math.floor((difference / (1000 * 60 * 60))),
+        minutes: Math.floor((difference / 1000 / 60) % 60),
+        seconds: Math.floor((difference / 1000) % 60),
+      };
     }
     return timeLeft;
   };
@@ -27,9 +25,8 @@ const Countdown = ({ expiresAt }) => {
       setTimeLeft(calculateTimeLeft());
     }, 1000);
 
-    // Clear the timer if the component is unmounted
     return () => clearTimeout(timer);
-  }, [timeLeft]); // Use `timeLeft` instead of `expiresAt` to avoid dependency issues
+  }, [timeLeft]);
 
   const timerComponents = [];
 

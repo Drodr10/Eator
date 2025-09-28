@@ -46,18 +46,15 @@ const MapComponent = ({ refreshKey, onPinUpdated }) => {
 
     const getPins = async () => {
       try {
-        const res = await axios.get("https://eator.onrender.com/api/pins",
-            { headers: { 'ngrok-skip-browser-warning': 'true' } }
-        );
+        const res = await axios.get("https://eator.onrender.com/api/pins");
         setPins(res.data);
-        console.log("Fetched pins:", res.data);
       } catch (err) {
         console.error("Error fetching pins:", err);
       }
     };
 
     getPins();
-  }, [refreshKey]); // The empty array means this effect runs once when the component mounts
+  }, [refreshKey]);
 
   const handleDelete = async (pinId) => {
     if (!window.confirm("Are you sure you want to delete this pin?")) return;
@@ -66,8 +63,7 @@ const MapComponent = ({ refreshKey, onPinUpdated }) => {
         const token = localStorage.getItem('eator_token');
         await axios.delete(`https://eator.onrender.com/api/pins/${pinId}`, {
             headers: {
-                'Authorization': `Bearer ${token}`,
-                'ngrok-skip-browser-warning': 'true'
+                'Authorization': `Bearer ${token}`
             }
         });
         setPins(pins.filter(pin => pin._id !== pinId));
@@ -85,7 +81,6 @@ const MapComponent = ({ refreshKey, onPinUpdated }) => {
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       />
 
-      {/* Map over the pins and create a Marker for each one */}
       {Array.isArray(pins) && pins.map(pin => {
         const canModify = user && (user.role === 'Admin' || user.user_id === pin.user_id);
         return (
@@ -94,7 +89,6 @@ const MapComponent = ({ refreshKey, onPinUpdated }) => {
                <p className="popup"><strong>{pin.description}</strong></p>
                 <p className="popup">Location: {pin.location_name}</p>
                 <p className="popup"><small>Posted by: {pin.username}</small></p>
-                {console.log("Pin expires at:", pin.expiresAt)}
                 <Countdown expiresAt={String(pin.expiresAt)} />
 
                 {canModify && (

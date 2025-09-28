@@ -6,21 +6,16 @@ const EditPinForm = ({ pin, onClose, onPinUpdated }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // Get the current time in the format required by the datetime-local input
   const now = new Date();
   now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
   const minDateTime = now.toISOString().slice(0, 16);
-  
-  // Pre-fill the form when the component loads
+
   useEffect(() => {
     if (pin) {
-      // --- THIS IS THE FIX for pre-filling ---
-      const date = new Date(pin.expiresAt);
-      // Adjust for the browser's timezone before slicing
+      const date = new Date(pin.expiresAt + 'Z');
       date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
       const localExpiresAt = date.toISOString().slice(0, 16);
-      // ------------------------------------
-      
+
       setFormData({
         description: pin.description,
         location_name: pin.location_name,
@@ -51,15 +46,11 @@ const EditPinForm = ({ pin, onClose, onPinUpdated }) => {
 
     const token = localStorage.getItem('eator_token');
     try {
-        // --- THIS IS THE FIX for submitting ---
-        // Creating a Date from the input string and converting to ISO
-        // correctly handles the conversion from local time to UTC.
         const expiresAtISO = new Date(formData.expiresAt).toISOString();
-        // ----------------------------------
 
         await axios.put(`https://eator.onrender.com/api/pins/${pin._id}`,
             { ...formData, expiresAt: expiresAtISO },
-            { headers: { 'Authorization': `Bearer ${token}`, 'ngrok-skip-browser-warning': 'true' } }
+            { headers: { 'Authorization': `Bearer ${token}` } }
         );
 
         if (onPinUpdated) {

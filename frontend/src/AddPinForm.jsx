@@ -1,4 +1,3 @@
-// In src/AddPinForm.jsx
 import React, { useState } from 'react';
 import axios from 'axios';
 
@@ -40,7 +39,6 @@ const AddPinForm = ({ onClose, onPinAdded }) => {
     setIsLoading(true);
     setError('');
 
-    // Get the token from Local Storage
     const token = localStorage.getItem('eator_token');
     if (!token) {
       setError('You must be logged in to add a pin.');
@@ -58,13 +56,12 @@ const AddPinForm = ({ onClose, onPinAdded }) => {
         },
         {
           headers: {
-            'Authorization': `Bearer ${token}`, // Send the token
-            'ngrok-skip-browser-warning': 'true' // Don't forget this!
+            'Authorization': `Bearer ${token}`
           }
         }
       );
-      onPinAdded(); // Tell the App component to refresh the pins
-      onClose(); // Close the modal
+      onPinAdded();
+      onClose();
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to add pin.');
     } finally {

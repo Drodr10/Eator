@@ -20,12 +20,11 @@ function App() {
     if (token) {
       setShowAddPinModal(true);
     } else {
-      setShowAuthModal(true); // If not logged in, show login modal
+      setShowAuthModal(true);
     }
   };
 
   const handlePinAdded = useCallback(() => {
-    // Increment the key to force MapComponent to re-fetch pins
     setRefreshKey(prevKey => prevKey + 1);
   }, []);
 
@@ -39,14 +38,14 @@ function App() {
   const handleLogout = () => {
     localStorage.removeItem('eator_token');
     setIsLoggedIn(false);
-    navigate('/'); // Redirect to the home page after logout
+    navigate('/');
   };
 
   const handleLoginSuccess = () => {
     const token = localStorage.getItem('eator_token');
     if (token) {
       setIsLoggedIn(true);
-      navigate('/'); // Redirect to the home page after login
+      navigate('/');
     }
   };
 
@@ -63,7 +62,6 @@ function App() {
         <Route path="/about" element={<About />} />
       </Routes>
 
-      {/* Modals */}
       {showAuthModal && <AuthModal onClose={() => setShowAuthModal(false)} onLoginSuccess={handleLoginSuccess} />}
       {showAddPinModal && <AddPinForm onClose={() => setShowAddPinModal(false)} onPinAdded={handlePinAdded} />}
     </div>
