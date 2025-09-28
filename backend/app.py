@@ -189,11 +189,14 @@ def edit_pin(current_user, pin_id):
         if 'expiresAt' in edit_data and edit_data['expiresAt']:
             try:
                 # Parse the new expiration date from the provided calendar/clock format
-                new_expiresAt = parser.isoparse(edit_data['expiresAt'])
-                if new_expiresAt < datetime.datetime.now(EASTERN):
-                    return jsonify({"message": "Expiration date cannot be in the past"}), 400
+                new_expires_at = parser.isoparse(edit_data['expiresAt'])
+                if new_expires_at.tzinfo is None:
+                    new_expires_at = new_expires_at.replace(tzinfo=datetime.timezone.utc)
+                    
+                if new_expires_at < datetime.datetime.now(datetime.timezone.utc):
+                    return jsonify({"message": "Expiration date cannot be in the past"}, 400)
             
-                edit_fields['expiresAt'] = new_expiresAt
+                edit_fields['expiresAt'] = new_expires_at
             except:
                 return jsonify({"message": "Invalid date format for expiresAt"}), 400
             
