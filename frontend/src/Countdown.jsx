@@ -29,7 +29,7 @@ const Countdown = ({ expiresAt }) => {
 
     // Clear the timer if the component is unmounted
     return () => clearTimeout(timer);
-  }, [expiresAt]);
+  }, [timeLeft]); // Use `timeLeft` instead of `expiresAt` to avoid dependency issues
 
   const timerComponents = [];
 

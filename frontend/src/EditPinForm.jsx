@@ -89,7 +89,11 @@ const EditPinForm = ({ pin, onClose, onPinUpdated }) => {
             type="text"
             name="description"
             value={formData.description}
-            onChange={handleInputChange}
+            onChange={(e) => {
+              if (e.target.value.length <= 50) {
+                handleInputChange(e);
+              }
+            }}
             required
           />
           <input
@@ -97,7 +101,11 @@ const EditPinForm = ({ pin, onClose, onPinUpdated }) => {
             type="text"
             name="location_name"
             value={formData.location_name}
-            onChange={handleInputChange}
+            onChange={(e) => {
+              if (e.target.value.length <= 50) {
+                handleInputChange(e);
+              }
+            }}
             required
           />
           <input

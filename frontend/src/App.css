@@ -549,3 +549,10 @@ body.dark-mode .page-container p strong {
     justify-content: space-between; /* Distribute items evenly */
   }
 }
+
+.popup {
+  max-width: 300px; /* Constrain the width of the popup */
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+}

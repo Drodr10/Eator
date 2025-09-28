@@ -87,7 +87,11 @@ const AddPinForm = ({ onClose, onPinAdded }) => {
             type="text"
             placeholder="Description (e.g., Pizza slices)"
             value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            onChange={(e) => {
+              if (e.target.value.length <= 50) {
+                setDescription(e.target.value);
+              }
+            }}
             required
           />
           <input
@@ -95,7 +99,11 @@ const AddPinForm = ({ onClose, onPinAdded }) => {
             type="text"
             placeholder="Location (e.g., Marston Basement)"
             value={locationName}
-            onChange={(e) => setLocationName(e.target.value)}
+            onChange={(e) => {
+              if (e.target.value.length <= 50) {
+                setLocationName(e.target.value);
+              }
+            }}
             required
           />
           <select

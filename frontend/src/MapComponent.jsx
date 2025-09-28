@@ -78,9 +78,9 @@ const MapComponent = ({ refreshKey, onPinUpdated }) => {
         return (
           <Marker key={pin._id} position={[pin.coordinates.lat, pin.coordinates.lng]}>
             <Popup>
-               <p><strong>{pin.description}</strong></p>
-                <p>Location: {pin.location_name}</p>
-                <p><small>Posted by: {pin.username}</small></p>
+               <p className="popup"><strong>{pin.description}</strong></p>
+                <p className="popup">Location: {pin.location_name}</p>
+                <p className="popup"><small>Posted by: {pin.username}</small></p>
                 {console.log("Pin expires at:", pin.expiresAt)}
                 <Countdown expiresAt={String(pin.expiresAt)} />
 
