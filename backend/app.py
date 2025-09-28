@@ -15,16 +15,13 @@ from zoneinfo import ZoneInfo
 UF_SW_CORNER = (29.62725, -82.37236)
 UF_NE_CORNER = (29.660000, -82.300000)
 
-# Define the timezone for the application
 EASTERN = ZoneInfo("America/New_York")
 
 # Load environment variables from .env file
 load_dotenv()
 
-# Initialize Flask app
 app = Flask(__name__)
 # Enable CORS to allow your frontend to communicate with this server
-
 origins = [
     "http://localhost:5173",
     "https://eator.vercel.app"
@@ -37,9 +34,9 @@ app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
 # --- Database Connection ---
 MONGO_URI = os.getenv("MONGO_URI")
 client = MongoClient(MONGO_URI)
-db = client.eator # Use a database named 'eator'
-pins_collection = db.pins # Use a collection named 'pins'
-users_collection = db.users # Collection for user data
+db = client.eator
+pins_collection = db.pins
+users_collection = db.users
 
 # --- Admin Seeding ---
 def seed_admin_user():
@@ -58,7 +55,7 @@ def seed_admin_user():
             })
             print(f"Admin user '{admin_data['username']}' created.")
 
-# --- The "Magic" Part: TTL Index ---
+# --- TTL Index ---
 # This special index tells MongoDB to automatically delete documents
 # from this collection after a certain amount of time.
 # We create an index on the 'expiresAt' field.
@@ -66,7 +63,6 @@ pins_collection.create_index("expiresAt", expireAfterSeconds=0)
 print("TTL index on 'expiresAt' ensured.")
 
 # --- Helper function to convert MongoDB docs to JSON ---
-# MongoDB documents have a special ObjectId that needs to be converted to a string
 def serialize_doc(doc):
     """Recursively convert ObjectId and datetime objects to strings."""
     try:
@@ -87,29 +83,33 @@ def serialize_doc(doc):
 
 # --- Token Verification Decorator ---
 def token_required(f):
+    """
+    A decorator to ensure that a user is logged in and has a valid token
+    before allowing them to access a specific route.
+    """
     @wraps(f)
     def decorated(*args, **kwargs):
         token = None
-        # Check for token in the 'x-access-token' header
         if 'Authorization' in request.headers:
+            # The token is expected to be in the format "Bearer <token>"
             token = request.headers['Authorization'].split(" ")[1]
 
         if not token:
             return jsonify({'message': 'Token is missing!'}), 401
 
         try:
-            # Decode the token using the secret key
+            # Try to decode the token with the secret key
             data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
             current_user = users_collection.find_one({'_id': ObjectId(data['user_id'])})
+        # Handle specific errors for expired or invalid tokens
         except jwt.ExpiredSignatureError:
             return jsonify({'message': 'Token has expired!'}), 401
         except jwt.InvalidTokenError:
             return jsonify({'message': 'Token is invalid!'}), 401
         except Exception as e:
-            print(f"Error decoding token: {e}")  # Print the error for debugging
+            print(f"Error decoding token: {e}")
             raise            
         
-        # Pass the current user to the decorated function
         return f(current_user, *args, **kwargs)
 
     return decorated
@@ -122,7 +122,7 @@ def get_all_pins():
         pins = [serialize_doc(pin) for pin in pins_collection.find()]
         return jsonify(pins), 200
     except Exception as e:
-        print(f"Error decoding token: {e}")  # Print the error for debugging      
+        print(f"Error decoding token: {e}")     
         raise
     
 @app.route("/api/pins", methods=['POST'])
@@ -137,7 +137,7 @@ def create_pin(current_user):
     lat = coords.get('lat')
     lng = coords.get('lng')
 
-    # Check if the new pin is inside our updated geofence
+    # Check if the new pin is inside our boundaries
     is_lat_in_bounds = UF_SW_CORNER[0] < lat < UF_NE_CORNER[0]
     is_lng_in_bounds = UF_SW_CORNER[1] < lng < UF_NE_CORNER[1]
 
@@ -146,7 +146,6 @@ def create_pin(current_user):
 
     # If it's valid, proceed with saving to the database
     try:
-        # Set creation and expiration times in Eastern Time
         createdAt = datetime.datetime.now(EASTERN)
         duration_minutes = data.get("duration_minutes", 60)
         expiresAt = createdAt + datetime.timedelta(minutes=duration_minutes)
@@ -167,7 +166,7 @@ def create_pin(current_user):
         return jsonify(serialize_doc(newly_created_pin)), 201
 
     except Exception as e:
-        print(f"Error decoding token: {e}")  # Print the error for debugging
+        print(f"Error decoding token: {e}")
         raise
     
 @app.route("/api/pins/<pin_id>", methods=['PUT'])
@@ -180,6 +179,7 @@ def edit_pin(current_user, pin_id):
             return jsonify({"message": "Pin not found"}), 404
         
         is_admin = current_user.get('role') == 'Admin'
+        # Only allows the creator or an admin to edit the post
         if pin['user_id'] != current_user['_id'] and not is_admin:
             return jsonify({"message": "You are not authorized to edit this pin"}), 403
         
@@ -213,7 +213,7 @@ def edit_pin(current_user, pin_id):
         return jsonify(serialize_doc(edited_pin)), 200
     
     except Exception as e:
-        print(f"Error decoding token: {e}")  # Print the error for debugging
+        print(f"Error decoding token: {e}")
         raise
         
 @app.route("/api/pins/<pin_id>", methods=['DELETE'])
@@ -221,7 +221,6 @@ def edit_pin(current_user, pin_id):
 def delete_pin(current_user, pin_id):
     """Deletes a pin if the user is the owner."""
     try:
-        # Find the pin by its ID
         pin = pins_collection.find_one({'_id': ObjectId(pin_id)})
 
         if not pin:
@@ -232,13 +231,12 @@ def delete_pin(current_user, pin_id):
         if pin['user_id'] != current_user['_id'] and not is_admin:
             return jsonify({"message": "You are not authorized to delete this pin"}), 403
 
-        # Delete the pin
         pins_collection.delete_one({'_id': ObjectId(pin_id)})
 
         return jsonify({"message": "Pin deleted successfully"}), 200
 
     except Exception as e:
-        print(f"Error decoding token: {e}")  # Print the error for debugging
+        print(f"Error decoding token: {e}")
         raise
     
 @app.route('/api/signup', methods=['POST'])
@@ -250,11 +248,9 @@ def signup():
     if not username or not password:
         return jsonify({"message": "Username and password are required"}), 400
 
-    # Check if user already exists
     if users_collection.find_one({'username': username}):
         return jsonify({"message": "Username already exists"}), 409
     
-    # Hash the password for security
     hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
     
     # Save user to the 'users' collection in MongoDB
@@ -277,7 +273,6 @@ def login():
     
     # Check if user exists and password is correct
     if user and bcrypt.check_password_hash(user['password'], password):
-        # Create a JWT token
         token = jwt.encode({
             'user_id': str(user['_id']),
             'exp': datetime.datetime.now(EASTERN) + datetime.timedelta(hours=24),
