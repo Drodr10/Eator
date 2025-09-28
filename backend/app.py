@@ -111,7 +111,7 @@ def get_all_pins():
         print(f"Error decoding token: {e}")  # Print the error for debugging      
         raise
     
-@app.route("/api/pins", methods=['PUT'])
+@app.route("/api/pins", methods=['POST'])
 @token_required
 def create_pin(current_user):
     data = request.get_json()
@@ -156,7 +156,7 @@ def create_pin(current_user):
         print(f"Error decoding token: {e}")  # Print the error for debugging
         raise
     
-@app.route("/api/pins/<pin_id>", methods=['POST'])
+@app.route("/api/pins/<pin_id>", methods=['PUT'])
 @token_required
 def edit_pin(current_user, pin_id):
     try:
