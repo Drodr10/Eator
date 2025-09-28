@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, useNavigate } from 'react-router-dom';
 import MapComponent from './MapComponent';
 import AuthModal from './AuthModal';
 import AddPinForm from './AddPinForm'; 
@@ -13,6 +13,7 @@ function App() {
   const [showAddPinModal, setShowAddPinModal] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('eator_token'));
   const [refreshKey, setRefreshKey] = useState(0);
+  const navigate = useNavigate();
 
   const handleOpenAddPin = () => {
     const token = localStorage.getItem('eator_token');
@@ -38,14 +39,14 @@ function App() {
   const handleLogout = () => {
     localStorage.removeItem('eator_token');
     setIsLoggedIn(false);
-    window.location.reload();
-  }
+    navigate('/'); // Redirect to the home page after logout
+  };
 
   const handleLoginSuccess = () => {
     const token = localStorage.getItem('eator_token');
     if (token) {
       setIsLoggedIn(true);
-      window.location.reload();
+      navigate('/'); // Redirect to the home page after login
     }
   };
 
