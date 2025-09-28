@@ -1,6 +1,7 @@
 import os
 import datetime
 import jwt
+from dateutil import parser
 from flask import Flask, request, jsonify
 from flask_bcrypt import Bcrypt
 from pymongo import MongoClient
@@ -176,10 +177,16 @@ def edit_pin(current_user, pin_id):
             'duration_minutes': edit_data.get('duration_minutes')
         }
         
-        createdAt = pin.get("createdAt", datetime.datetime.now(datetime.timezone.utc))
-        duration_minutes = pin.get("duration_minutes", 60)
-        expiresAt = createdAt + datetime.timedelta(minutes=duration_minutes)
-
+        if 'expiresAt' in edit_data and edit_data['expiresAt']:
+            try:
+                new_expiresAt = parser.isoparse(edit_data(['expiresAt']))
+                if new_expiresAt < datetime.datetime.now(datetime.timezone.utc):
+                    return jsonify({"message":"Expiration date cannot be in the past"}), 400
+            
+                edit_fields['expiresAt'] = new_expiresAt
+            except:
+                return jsonify({"message": "Invalid date format for expiresAt"}), 400
+            
         pins_collection.update_one(
             {'_id': ObjectId(pin_id)},
             {'$set': edit_fields}
