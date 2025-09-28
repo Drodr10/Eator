@@ -6,6 +6,20 @@ import { jwtDecode } from 'jwt-decode';
 
 import EditPinForm from './EditPinForm.jsx';
 
+import L from 'leaflet';
+import icon from 'leaflet/dist/images/marker-icon.png';
+import iconShadow from 'leaflet/dist/images/marker-shadow.png';
+
+const defaultIcon = L.icon({
+  iconUrl: icon,
+  shadowUrl: iconShadow,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  shadowSize: [41, 41]
+});
+
+L.Marker.prototype.options.icon = defaultIcon;
+
 const position = [29.6436, -82.3549];
 
 const MapComponent = ({ refreshKey, onPinUpdated }) => {
