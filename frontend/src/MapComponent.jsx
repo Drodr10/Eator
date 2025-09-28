@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import Countdown from './Countdown.jsx';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 
@@ -81,7 +82,8 @@ const MapComponent = ({ refreshKey }) => {
                 <p>Location: {pin.location_name}</p>
                 <p><small>Posted by: {pin.username}</small></p>
                 
-                {/* Conditionally render buttons */}
+                <Countdown expiresAt={pin.expiresAt} />
+
                 {canModify && (
                   <div className="popup-buttons">
                     <button className="edit-button" onClick={() => setEditingPin(pin)}>Edit</button>

@@ -83,6 +83,7 @@ const AddPinForm = ({ onClose, onPinAdded }) => {
         <form onSubmit={handleSubmit}>
           {error && <p className="error-message">{error}</p>}
           <input
+            className="form-input"
             type="text"
             placeholder="Description (e.g., Pizza slices)"
             value={description}
@@ -90,6 +91,7 @@ const AddPinForm = ({ onClose, onPinAdded }) => {
             required
           />
           <input
+            className="form-input"
             type="text"
             placeholder="Location (e.g., Marston Basement)"
             value={locationName}
@@ -99,13 +101,13 @@ const AddPinForm = ({ onClose, onPinAdded }) => {
           <select
             value={duration}
             onChange={(e) => setDuration(parseInt(e.target.value))}
-            className="form-input"
+            className="form-select"
             required
             >
-            <option value={15}>15 minutes</option>
-            <option value={30}>30 minutes</option>
-            <option value={60}>1 hour</option>
-            <option value={120}>2 hours</option>
+            <option className="form-select" value={15}>15 minutes</option>
+            <option className="form-select" value={30}>30 minutes</option>
+            <option className="form-select" value={60}>1 hour</option>
+            <option className="form-select" value={120}>2 hours</option>
             </select>
           <button type="button" onClick={handleGetLocation} className="location-button" disabled={isLoading}>
             {isLoading ? 'Getting...' : (coordinates ? 'Location Captured!' : 'Get Current Location')}

@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import MapComponent from './MapComponent';
 import AuthModal from './AuthModal';
-import AddPinForm from './AddPinForm'; // Import the new form
+import AddPinForm from './AddPinForm'; 
 import './App.css';
 
 

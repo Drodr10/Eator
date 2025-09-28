@@ -61,6 +61,7 @@ const EditPinForm = ({ pin, onClose, onPinUpdated }) => {
         <form onSubmit={handleSubmit}>
           {error && <p className="error-message">{error}</p>}
           <input
+            className="form-input"
             type="text"
             name="description"
             value={formData.description}
@@ -68,6 +69,7 @@ const EditPinForm = ({ pin, onClose, onPinUpdated }) => {
             required
           />
           <input
+            className="form-input"
             type="text"
             name="location_name"
             value={formData.location_name}
@@ -75,6 +77,7 @@ const EditPinForm = ({ pin, onClose, onPinUpdated }) => {
             required
           />
           <input
+            className="edit-datetime-input"
             type="datetime-local"
             name="expiresAt"
             value={formData.expiresAt}
