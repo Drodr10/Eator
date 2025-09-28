@@ -27,7 +27,7 @@ app = Flask(__name__)
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 bcrypt = Bcrypt(app)
 # You'll need to set a secret key to sign the JWTs
-app.config['SECRET_KEY'] = 'LeftoverLinks2025' 
+app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
 
 # --- Database Connection ---
 MONGO_URI = os.getenv("MONGO_URI")
@@ -96,6 +96,10 @@ def token_required(f):
             # Decode the token using the secret key
             data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
             current_user = users_collection.find_one({'_id': ObjectId(data['user_id'])})
+        except jwt.ExpiredSignatureError:
+            return jsonify({'message': 'Token has expired!'}), 401
+        except jwt.InvalidTokenError:
+            return jsonify({'message': 'Token is invalid!'}), 401
         except Exception as e:
             print(f"Error decoding token: {e}")  # Print the error for debugging
             raise            
