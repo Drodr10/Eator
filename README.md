@@ -96,14 +96,7 @@ cd Eator
     npm install
     ```
 
-3.  **Create a `.env.local` file** in the `frontend` directory. This file will hold your Google Maps API key and the URL for your backend.
-    ```
-    VITE_GOOGLE_MAPS_API_KEY=your_google_maps_api_key
-    VITE_API_URL=http://127.0.0.1:5001
-    ```
-    *Note: You must update the `axios` calls in the frontend source code to use `import.meta.env.VITE_API_URL` instead of a hardcoded URL.*
-
-4.  **Run the frontend development server:**
+3.  **Run the frontend development server:**
     ```bash
     npm run dev
     ```
